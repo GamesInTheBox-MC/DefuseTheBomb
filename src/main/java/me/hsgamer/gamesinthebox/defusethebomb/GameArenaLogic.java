@@ -21,7 +21,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         return Arrays.asList(
                 boundingFeature,
                 new SimpleBoundingOffsetFeature(arena, boundingFeature),
-                new TntFeature()
+                new TntFeature(arena)
         );
     }
 }
