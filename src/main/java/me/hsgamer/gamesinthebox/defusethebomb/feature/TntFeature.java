@@ -69,4 +69,20 @@ public class TntFeature extends EntityFeature {
             }
         });
     }
+
+    public int getMinFuseTicks() {
+        return minFuseTicks;
+    }
+
+    public int getMaxFuseTicks() {
+        return maxFuseTicks;
+    }
+
+    public float getExplodeYield() {
+        return explodeYield;
+    }
+
+    public List<String> getNameTags() {
+        return nameTags;
+    }
 }

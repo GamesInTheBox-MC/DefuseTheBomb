@@ -35,7 +35,7 @@ public class DefuseTheBomb extends TemplateGameExpansion {
 
     @Override
     public TemplateGameEditor getEditor(TemplateGame game) {
-        return super.getEditor(game);
+        return new GameEditor(game);
     }
 
     @Override
