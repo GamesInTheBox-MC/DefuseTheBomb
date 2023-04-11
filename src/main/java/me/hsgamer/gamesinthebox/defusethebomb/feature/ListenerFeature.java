@@ -29,6 +29,10 @@ public class ListenerFeature implements Feature, Listener {
         this.arena = arena;
     }
 
+    public boolean isDamage() {
+        return isDamage;
+    }
+
     private TntFeature getTntFeature() {
         return this.arena.getFeature(TntFeature.class);
     }

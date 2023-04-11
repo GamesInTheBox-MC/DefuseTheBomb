@@ -5,8 +5,10 @@ import me.hsgamer.gamesinthebox.defusethebomb.feature.TntFeature;
 import me.hsgamer.gamesinthebox.game.feature.BoundingFeature;
 import me.hsgamer.gamesinthebox.game.feature.BoundingOffsetFeature;
 import me.hsgamer.gamesinthebox.game.feature.GameConfigFeature;
+import me.hsgamer.gamesinthebox.game.feature.PointFeature;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimpleBoundingFeature;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimpleBoundingOffsetFeature;
+import me.hsgamer.gamesinthebox.game.simple.feature.SimpleRewardFeature;
 import me.hsgamer.gamesinthebox.game.template.TemplateGameArena;
 import me.hsgamer.gamesinthebox.game.template.TemplateGameArenaLogic;
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
@@ -16,6 +18,8 @@ import me.hsgamer.minigamecore.base.Feature;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GameArenaLogic extends TemplateGameArenaLogic {
     private final DefuseTheBomb expansion;
@@ -28,6 +32,11 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
 
     public int getMaxSpawn() {
         return maxSpawn;
+    }
+
+    @Override
+    public void forceEnd() {
+        arena.getFeature(ListenerFeature.class).unregister();
     }
 
     @Override
@@ -52,6 +61,11 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     }
 
     @Override
+    public void onInGameStart() {
+        arena.getFeature(ListenerFeature.class).register();
+    }
+
+    @Override
     public void onInGameUpdate() {
         BoundingFeature boundingFeature = arena.getFeature(BoundingFeature.class);
         BoundingOffsetFeature boundingOffsetFeature = arena.getFeature(BoundingOffsetFeature.class);
@@ -67,5 +81,16 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
                 .filter(tnt -> !boundingFeature.checkBounding(tnt.getLocation()))
                 .forEach(tnt -> Scheduler.CURRENT.runEntityTask(expansion.getPlugin(), tnt, tnt::remove, () -> {
                 }, false));
+    }
+
+    @Override
+    public void onInGameOver() {
+        arena.getFeature(ListenerFeature.class).unregister();
+    }
+
+    @Override
+    public void onEndingStart() {
+        List<UUID> topList = arena.getFeature(PointFeature.class).getTopUUID().collect(Collectors.toList());
+        arena.getFeature(SimpleRewardFeature.class).tryReward(topList);
     }
 }
