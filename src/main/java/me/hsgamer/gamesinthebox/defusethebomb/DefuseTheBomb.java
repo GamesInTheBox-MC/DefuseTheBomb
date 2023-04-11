@@ -45,7 +45,7 @@ public class DefuseTheBomb extends TemplateGameExpansion {
 
     @Override
     public TemplateGameArenaLogic createArenaLogic(TemplateGameArena arena) {
-        return new GameArenaLogic(arena);
+        return new GameArenaLogic(this, arena);
     }
 
     @Override
