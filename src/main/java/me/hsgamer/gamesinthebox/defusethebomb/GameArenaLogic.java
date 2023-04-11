@@ -75,7 +75,8 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
 
         long size = tntFeature.countValid();
 
-        if (size < maxSpawn) {
+        long toSpawn = maxSpawn - (int) size;
+        for (int i = 0; i < toSpawn; i++) {
             tntFeature.spawn(boundingOffsetFeature.getRandomLocation());
         }
     }
