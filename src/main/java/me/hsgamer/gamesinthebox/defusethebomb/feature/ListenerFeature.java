@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.Optional;
@@ -73,6 +74,15 @@ public class ListenerFeature implements Feature, Listener {
             event.setDamage(0.0D);
 
         getPointFeature().applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_MINUS);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof TNTPrimed)) return;
+        if (!this.getTntFeature().contains(entity)) return;
+
+        event.blockList().clear();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
