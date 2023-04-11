@@ -36,6 +36,9 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     @Override
     public void forceEnd() {
         arena.getFeature(ListenerFeature.class).unregister();
+        arena.getFeature(TntFeature.class).setClearAllEntities(false);
+        arena.getFeature(TntFeature.class).stopClearEntities();
+        arena.getFeature(TntFeature.class).clearAllEntities();
     }
 
     @Override
@@ -86,7 +89,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         List<UUID> topList = arena.getFeature(PointFeature.class).getTopUUID().collect(Collectors.toList());
         arena.getFeature(SimpleRewardFeature.class).tryReward(topList);
 
-        arena.getFeature(TntFeature.class).scheduleClearAllEntities();
+        arena.getFeature(TntFeature.class).setClearAllEntities(true);
     }
 
     @Override
@@ -97,5 +100,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     @Override
     public void onEndingOver() {
         arena.getFeature(ListenerFeature.class).unregister();
+        arena.getFeature(TntFeature.class).setClearAllEntities(false);
+        arena.getFeature(TntFeature.class).stopClearEntities();
     }
 }
