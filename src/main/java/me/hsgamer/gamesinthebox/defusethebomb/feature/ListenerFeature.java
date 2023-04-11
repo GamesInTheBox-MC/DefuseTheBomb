@@ -1,6 +1,7 @@
 package me.hsgamer.gamesinthebox.defusethebomb.feature;
 
 import me.hsgamer.gamesinthebox.defusethebomb.DefuseTheBomb;
+import me.hsgamer.gamesinthebox.defusethebomb.GameArenaLogic;
 import me.hsgamer.gamesinthebox.game.feature.GameConfigFeature;
 import me.hsgamer.gamesinthebox.game.simple.SimpleGameArena;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimplePointFeature;
@@ -23,11 +24,13 @@ import java.util.Optional;
 public class ListenerFeature implements Feature, Listener {
     private final DefuseTheBomb expansion;
     private final SimpleGameArena arena;
+    private final GameArenaLogic arenaLogic;
     private boolean isDamage = false;
 
-    public ListenerFeature(DefuseTheBomb expansion, SimpleGameArena arena) {
+    public ListenerFeature(DefuseTheBomb expansion, SimpleGameArena arena, GameArenaLogic arenaLogic) {
         this.expansion = expansion;
         this.arena = arena;
+        this.arenaLogic = arenaLogic;
     }
 
     public boolean isDamage() {
@@ -73,7 +76,9 @@ public class ListenerFeature implements Feature, Listener {
         if (!this.isDamage)
             event.setDamage(0.0D);
 
-        getPointFeature().applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_MINUS);
+        if (arenaLogic.isInGame()) {
+            getPointFeature().applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_MINUS);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -87,6 +92,8 @@ public class ListenerFeature implements Feature, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
+        if (!arenaLogic.isInGame()) return;
+
         Entity entity = event.getRightClicked();
         if (!(entity instanceof TNTPrimed)) return;
         TNTPrimed tnt = (TNTPrimed) entity;

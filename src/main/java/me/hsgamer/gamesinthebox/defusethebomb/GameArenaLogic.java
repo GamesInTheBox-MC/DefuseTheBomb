@@ -11,7 +11,6 @@ import me.hsgamer.gamesinthebox.game.simple.feature.SimpleBoundingOffsetFeature;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimpleRewardFeature;
 import me.hsgamer.gamesinthebox.game.template.TemplateGameArena;
 import me.hsgamer.gamesinthebox.game.template.TemplateGameArenaLogic;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.common.Validate;
 import me.hsgamer.minigamecore.base.Feature;
 
@@ -47,6 +46,9 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
                 .flatMap(Validate::getNumber)
                 .map(Number::intValue)
                 .orElse(maxSpawn);
+
+        BoundingFeature boundingFeature = arena.getFeature(BoundingFeature.class);
+        arena.getFeature(TntFeature.class).addEntityClearCheck(entity -> !boundingFeature.checkBounding(entity.getLocation()));
     }
 
     @Override
@@ -56,18 +58,18 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
                 boundingFeature,
                 new SimpleBoundingOffsetFeature(arena, boundingFeature),
                 new TntFeature(arena),
-                new ListenerFeature(expansion, arena)
+                new ListenerFeature(expansion, arena, this)
         );
     }
 
     @Override
     public void onInGameStart() {
         arena.getFeature(ListenerFeature.class).register();
+        arena.getFeature(TntFeature.class).startClearEntities();
     }
 
     @Override
     public void onInGameUpdate() {
-        BoundingFeature boundingFeature = arena.getFeature(BoundingFeature.class);
         BoundingOffsetFeature boundingOffsetFeature = arena.getFeature(BoundingOffsetFeature.class);
         TntFeature tntFeature = arena.getFeature(TntFeature.class);
 
@@ -76,21 +78,23 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         if (size < maxSpawn) {
             tntFeature.spawn(boundingOffsetFeature.getRandomLocation());
         }
-
-        tntFeature.streamValid()
-                .filter(tnt -> !boundingFeature.checkBounding(tnt.getLocation()))
-                .forEach(tnt -> Scheduler.CURRENT.runEntityTask(expansion.getPlugin(), tnt, tnt::remove, () -> {
-                }, false));
-    }
-
-    @Override
-    public void onInGameOver() {
-        arena.getFeature(ListenerFeature.class).unregister();
     }
 
     @Override
     public void onEndingStart() {
         List<UUID> topList = arena.getFeature(PointFeature.class).getTopUUID().collect(Collectors.toList());
         arena.getFeature(SimpleRewardFeature.class).tryReward(topList);
+
+        arena.getFeature(TntFeature.class).scheduleClearAllEntities();
+    }
+
+    @Override
+    public boolean isEndingOver() {
+        return super.isEndingOver() && arena.getFeature(TntFeature.class).isAllEntityCleared();
+    }
+
+    @Override
+    public void onEndingOver() {
+        arena.getFeature(ListenerFeature.class).unregister();
     }
 }
