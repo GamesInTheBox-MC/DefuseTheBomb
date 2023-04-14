@@ -7,7 +7,6 @@ import me.hsgamer.gamesinthebox.util.Util;
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.common.Validate;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
 import org.jetbrains.annotations.Nullable;
@@ -51,12 +50,7 @@ public class TntFeature extends EntityFeature {
 
     @Override
     protected @Nullable Entity createEntity(Location location) {
-        World world = location.getWorld();
-        assert world != null;
-        if (!world.getChunkAt(location).isLoaded())
-            return null;
-
-        return world.spawn(location, TNTPrimed.class, tnt -> {
+        return location.getWorld().spawn(location, TNTPrimed.class, tnt -> {
             tnt.setFuseTicks(ThreadLocalRandom.current().nextInt(this.minFuseTicks, this.maxFuseTicks + 1));
             tnt.setYield(this.explodeYield);
             tnt.setIsIncendiary(false);
