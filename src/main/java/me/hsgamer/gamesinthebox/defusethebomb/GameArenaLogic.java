@@ -51,12 +51,12 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
                 .orElse(maxSpawn);
 
         BoundingFeature boundingFeature = arena.getFeature(BoundingFeature.class);
-        arena.getFeature(TntFeature.class).addEntityClearCheck(entity -> !boundingFeature.checkBounding(entity.getLocation()));
+        arena.getFeature(TntFeature.class).addEntityClearCheck(entity -> !boundingFeature.checkBounding(entity.getLocation(), true));
     }
 
     @Override
     public List<Feature> loadFeatures() {
-        SimpleBoundingFeature boundingFeature = new SimpleBoundingFeature(arena, true);
+        SimpleBoundingFeature boundingFeature = new SimpleBoundingFeature(arena);
         return Arrays.asList(
                 boundingFeature,
                 new SimpleBoundingOffsetFeature(arena, boundingFeature),
