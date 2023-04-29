@@ -59,7 +59,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         SimpleBoundingFeature boundingFeature = new SimpleBoundingFeature(arena);
         return Arrays.asList(
                 boundingFeature,
-                new SimpleBoundingOffsetFeature(arena, boundingFeature),
+                new SimpleBoundingOffsetFeature(arena, boundingFeature, true),
                 new TntFeature(arena),
                 new ListenerFeature(expansion, arena, this)
         );
