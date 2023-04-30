@@ -76,7 +76,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         BoundingOffsetFeature boundingOffsetFeature = arena.getFeature(BoundingOffsetFeature.class);
         TntFeature tntFeature = arena.getFeature(TntFeature.class);
 
-        long size = tntFeature.countValid() + tntFeature.countEntityRequests();
+        long size = tntFeature.countValid() + tntFeature.countSpawnRequests();
 
         long toSpawn = maxSpawn - (int) size;
         for (int i = 0; i < toSpawn; i++) {
@@ -102,5 +102,6 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         arena.getFeature(ListenerFeature.class).unregister();
         arena.getFeature(TntFeature.class).setClearAllEntities(false);
         arena.getFeature(TntFeature.class).stopTask();
+        arena.getFeature(TntFeature.class).clearAllEntities();
     }
 }
