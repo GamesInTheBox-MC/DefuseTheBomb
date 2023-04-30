@@ -37,7 +37,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     public void forceEnd() {
         arena.getFeature(ListenerFeature.class).unregister();
         arena.getFeature(TntFeature.class).setClearAllEntities(false);
-        arena.getFeature(TntFeature.class).stopClearEntities();
+        arena.getFeature(TntFeature.class).stopTask();
         arena.getFeature(TntFeature.class).clearAllEntities();
     }
 
@@ -68,7 +68,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     @Override
     public void onInGameStart() {
         arena.getFeature(ListenerFeature.class).register();
-        arena.getFeature(TntFeature.class).startClearEntities();
+        arena.getFeature(TntFeature.class).startTask();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
         BoundingOffsetFeature boundingOffsetFeature = arena.getFeature(BoundingOffsetFeature.class);
         TntFeature tntFeature = arena.getFeature(TntFeature.class);
 
-        long size = tntFeature.countValid();
+        long size = tntFeature.countValid() + tntFeature.countEntityRequests();
 
         long toSpawn = maxSpawn - (int) size;
         for (int i = 0; i < toSpawn; i++) {
@@ -101,6 +101,6 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
     public void onEndingOver() {
         arena.getFeature(ListenerFeature.class).unregister();
         arena.getFeature(TntFeature.class).setClearAllEntities(false);
-        arena.getFeature(TntFeature.class).stopClearEntities();
+        arena.getFeature(TntFeature.class).stopTask();
     }
 }
