@@ -35,10 +35,10 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
 
     @Override
     public void forceEnd() {
-        arena.getFeature(ListenerFeature.class).unregister();
         arena.getFeature(TntFeature.class).setClearAllEntities(false);
         arena.getFeature(TntFeature.class).stopTask();
         arena.getFeature(TntFeature.class).clearAllEntities();
+        arena.getFeature(ListenerFeature.class).unregister();
     }
 
     @Override
@@ -99,9 +99,9 @@ public class GameArenaLogic extends TemplateGameArenaLogic {
 
     @Override
     public void onEndingOver() {
-        arena.getFeature(ListenerFeature.class).unregister();
         arena.getFeature(TntFeature.class).setClearAllEntities(false);
         arena.getFeature(TntFeature.class).stopTask();
         arena.getFeature(TntFeature.class).clearAllEntities();
+        arena.getFeature(ListenerFeature.class).unregister();
     }
 }
