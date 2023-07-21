@@ -26,6 +26,8 @@ public class ListenerFeature implements Feature, Listener {
     private final SimpleGameArena arena;
     private final GameArenaLogic arenaLogic;
     private boolean isDamage = false;
+    private TntFeature tntFeature;
+    private SimplePointFeature pointFeature;
 
     public ListenerFeature(DefuseTheBomb expansion, SimpleGameArena arena, GameArenaLogic arenaLogic) {
         this.expansion = expansion;
@@ -37,20 +39,18 @@ public class ListenerFeature implements Feature, Listener {
         return isDamage;
     }
 
-    private TntFeature getTntFeature() {
-        return this.arena.getFeature(TntFeature.class);
-    }
-
-    private SimplePointFeature getPointFeature() {
-        return this.arena.getFeature(SimplePointFeature.class);
-    }
-
     public void register() {
         Bukkit.getPluginManager().registerEvents(this, expansion.getPlugin());
     }
 
     public void unregister() {
         HandlerList.unregisterAll(this);
+    }
+
+    @Override
+    public void init() {
+        tntFeature = arena.getFeature(TntFeature.class);
+        pointFeature = arena.getFeature(SimplePointFeature.class);
     }
 
     @Override
@@ -70,14 +70,14 @@ public class ListenerFeature implements Feature, Listener {
 
         Entity damager = event.getDamager();
         if (!(damager instanceof TNTPrimed)) return;
-        if (!this.getTntFeature().contains(damager))
+        if (!tntFeature.contains(damager))
             return;
 
         if (!this.isDamage)
             event.setDamage(0.0D);
 
         if (arenaLogic.isInGame()) {
-            getPointFeature().applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_MINUS);
+            pointFeature.applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_MINUS);
         }
     }
 
@@ -85,9 +85,12 @@ public class ListenerFeature implements Feature, Listener {
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof TNTPrimed)) return;
-        if (!this.getTntFeature().contains(entity)) return;
+        if (!tntFeature.contains(entity)) return;
 
         event.blockList().clear();
+        if (arenaLogic.isInGame()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -97,10 +100,10 @@ public class ListenerFeature implements Feature, Listener {
         Entity entity = event.getRightClicked();
         if (!(entity instanceof TNTPrimed)) return;
         TNTPrimed tnt = (TNTPrimed) entity;
-        if (!this.getTntFeature().contains(tnt)) return;
+        if (!tntFeature.contains(tnt)) return;
 
         Player player = event.getPlayer();
-        getPointFeature().applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_PLUS);
+        pointFeature.applyPoint(player.getUniqueId(), DefuseTheBomb.POINT_PLUS);
         EntityUtil.despawnSafe(tnt);
     }
 }
