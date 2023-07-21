@@ -88,7 +88,7 @@ public class ListenerFeature implements Feature, Listener {
         if (!tntFeature.contains(entity)) return;
 
         event.blockList().clear();
-        if (arenaLogic.isInGame()) {
+        if (!arenaLogic.isInGame()) {
             event.setCancelled(true);
         }
     }
