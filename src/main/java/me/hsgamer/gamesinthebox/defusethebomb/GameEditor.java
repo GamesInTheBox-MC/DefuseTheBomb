@@ -3,8 +3,8 @@ package me.hsgamer.gamesinthebox.defusethebomb;
 import me.hsgamer.gamesinthebox.defusethebomb.feature.ListenerFeature;
 import me.hsgamer.gamesinthebox.defusethebomb.feature.TntFeature;
 import me.hsgamer.gamesinthebox.game.GameArena;
+import me.hsgamer.gamesinthebox.game.simple.action.BooleanAction;
 import me.hsgamer.gamesinthebox.game.simple.action.NumberAction;
-import me.hsgamer.gamesinthebox.game.simple.action.ValueAction;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimpleBoundingFeature;
 import me.hsgamer.gamesinthebox.game.simple.feature.SimpleBoundingOffsetFeature;
 import me.hsgamer.gamesinthebox.game.template.TemplateGame;
@@ -15,7 +15,10 @@ import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameEditor extends TemplateGameEditor {
     private final SimpleBoundingFeature.Editor simpleBoundingFeatureEditor = SimpleBoundingFeature.editor(true);
@@ -74,7 +77,7 @@ public class GameEditor extends TemplateGameEditor {
                 return "Set the explode yield of the TNT";
             }
         });
-        map.put("set-damage-on-explode", new ValueAction<Boolean>() {
+        map.put("set-damage-on-explode", new BooleanAction() {
             @Override
             protected boolean performAction(@NotNull CommandSender sender, @NotNull Boolean value, String... args) {
                 isDamageOnExplode = value;
@@ -82,28 +85,8 @@ public class GameEditor extends TemplateGameEditor {
             }
 
             @Override
-            protected int getValueArgCount() {
-                return 1;
-            }
-
-            @Override
-            protected Optional<Boolean> parseValue(@NotNull CommandSender sender, String... args) {
-                return Optional.of(Boolean.parseBoolean(args[0]));
-            }
-
-            @Override
-            protected @NotNull List<String> getValueArgs(@NotNull CommandSender sender, String... args) {
-                return Arrays.asList("true", "false");
-            }
-
-            @Override
             public @NotNull String getDescription() {
                 return "Set whether the TNT will damage the players or not";
-            }
-
-            @Override
-            public @NotNull String getArgsUsage() {
-                return "<true/false>";
             }
         });
         map.put("set-max-spawn", new NumberAction() {
