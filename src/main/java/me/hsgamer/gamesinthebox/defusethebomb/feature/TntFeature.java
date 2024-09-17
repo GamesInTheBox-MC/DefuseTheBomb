@@ -50,18 +50,18 @@ public class TntFeature extends EntityFeature {
 
     @Override
     protected @Nullable Entity createEntity(Location location) {
-        return location.getWorld().spawn(location, TNTPrimed.class, tnt -> {
-            tnt.setFuseTicks(ThreadLocalRandom.current().nextInt(this.minFuseTicks, this.maxFuseTicks + 1));
-            tnt.setYield(this.explodeYield);
-            tnt.setIsIncendiary(false);
-            tnt.setGlowing(true);
+        TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
+        tnt.setFuseTicks(ThreadLocalRandom.current().nextInt(this.minFuseTicks, this.maxFuseTicks + 1));
+        tnt.setYield(this.explodeYield);
+        tnt.setIsIncendiary(false);
+        tnt.setGlowing(true);
 
-            String nameTag = Util.getRandomColorizedString(nameTags, "");
-            if (!nameTag.isEmpty()) {
-                tnt.setCustomName(nameTag);
-                tnt.setCustomNameVisible(true);
-            }
-        });
+        String nameTag = Util.getRandomColorizedString(nameTags, "");
+        if (!nameTag.isEmpty()) {
+            tnt.setCustomName(nameTag);
+            tnt.setCustomNameVisible(true);
+        }
+        return tnt;
     }
 
     public int getMinFuseTicks() {
